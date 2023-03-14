@@ -62,20 +62,14 @@ def select_articles(field=None, publishers=None, date_from=None):
             ', '.join(f'\'{e}\'' for e in publishers))
 
     if date_from is not None:
-        sql += ' and date >= "{}"'.format(date_from.strftime('%Y-%m-%d'))
+        sql += f""" and date >= "{date_from.strftime('%Y-%m-%d')}\""""
 
     entries = get_engine().execute(sql)
-    if isinstance(field, str):
-        return [e[0] for e in entries]
-    return [e for e in entries]
+    return [e[0] for e in entries] if isinstance(field, str) else list(entries)
 
 
 def update_scores(index, scores):
-    sql = 'update news ' \
-          'set pos_score = {},' \
-          '    neu_score = {},' \
-          '    neg_score = {} ' \
-          'where id = {}'.format(scores[0], scores[1], scores[2], index)
+    sql = f'update news set pos_score = {scores[0]},    neu_score = {scores[1]},    neg_score = {scores[2]} where id = {index}'
     get_engine().execute(sql)
 
 

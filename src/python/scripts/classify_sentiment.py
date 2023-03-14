@@ -71,13 +71,13 @@ def main():
 
     num_classes = 2
     embedding_dim = 64
-    cell_type = 'lstm'
-    num_layers = 1
     nhead = 2
     num_encoder_layers = 2
 
     model_type = 'rnn'
     if model_type == 'rnn':
+        cell_type = 'lstm'
+        num_layers = 1
         cls_model = models.RNNClassifier(
             vocab_size, num_classes, embedding_dim, cell_type, num_layers) \
             .to(utils.to_device())

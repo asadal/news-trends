@@ -76,12 +76,10 @@ def to_integer_matrix(pieces, vocabulary=None, padding='first'):
     assert padding in {'first', 'last'}
 
     if vocabulary is None:
-        vocabulary = list(set(p for pp in pieces for p in pp))
+        vocabulary = list({p for pp in pieces for p in pp})
     piece_dict = {p: i for (i, p) in enumerate(vocabulary)}
 
-    indices = []
-    for i, pp in enumerate(pieces):
-        indices.append([piece_dict[p] for p in pp if p in piece_dict])
+    indices = [[piece_dict[p] for p in pp if p in piece_dict] for pp in pieces]
     max_len = max(len(index) for index in indices)
 
     num_data = len(pieces)
@@ -97,7 +95,7 @@ def to_integer_matrix(pieces, vocabulary=None, padding='first'):
 
 def to_multi_hot_matrix(pieces, vocabulary=None):
     if vocabulary is None:
-        vocabulary = list(set(p for pp in pieces for p in pp))
+        vocabulary = list({p for pp in pieces for p in pp})
     piece_dict = {p: i for (i, p) in enumerate(vocabulary)}
     num_data = len(pieces)
     vocab_size = len(vocabulary)
@@ -172,11 +170,7 @@ def search_keywords_as_dataframe(*keywords, num_days='all', ignore_time=True,
 
     searched = []
     for title, entry in zip(titles, others):
-        found = False
-        for keyword in keywords:
-            if title.find(keyword) >= 0:
-                found = True
-                break
+        found = any(title.find(keyword) >= 0 for keyword in keywords)
         if found:
             searched.append((title, *entry))
     df = pd.DataFrame(searched, columns=field)
@@ -193,9 +187,9 @@ def search_keyword_sentiment(keyword, num_days=7, max_articles=10):
         *keywords, num_days=num_days, with_id=True, with_scores=True)
 
     df = df.sort_values(by='date', ascending=False)
-    df_list = []
-    for pub, df_ in df.groupby(by='publisher'):
-        df_list.append(df_.iloc[:max_articles, :])
+    df_list = [
+        df_.iloc[:max_articles, :] for pub, df_ in df.groupby(by='publisher')
+    ]
     df = pd.concat(df_list, axis=0)
 
     if df.empty:
@@ -249,8 +243,7 @@ def find_popular_keywords(num_words=20, num_days=1):
         keywords = to_keywords(words_dict[date])
         keywords = [w for words in keywords for w in words]
         keywords = Counter(keywords).most_common(num_words)
-        for word, count in keywords:
-            data.append((date, word, count))
+        data.extend((date, word, count) for word, count in keywords)
     return pd.DataFrame(data, columns=['date', 'word', 'count'])
 
 

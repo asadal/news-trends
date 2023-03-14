@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-_ROOT_DIR = os.path.abspath(__file__ + '/../../../../')
+_ROOT_DIR = os.path.abspath(f'{__file__}/../../../../')
 _CLIENT = None
 
 
@@ -34,9 +34,10 @@ def send_query(documents):
 
 
 def compute_scores(documents, max_records=1000):
-    documents_split = []
-    for i in range(0, len(documents), max_records):
-        documents_split.append(documents[i:i + max_records])
+    documents_split = [
+        documents[i : i + max_records]
+        for i in range(0, len(documents), max_records)
+    ]
     scores_list = [send_query(d) for d in documents_split]
     # scores_list = multiprocessing.Pool().map(send_query, documents_split)
     return np.array([e for s in scores_list for e in s])

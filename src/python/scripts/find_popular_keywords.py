@@ -6,7 +6,7 @@ def main():
     for date, df_ in df.groupby(by='date'):
         print(f'{date}:', end=' ')
         for _, row in df_.iterrows():
-            print('{} ({})'.format(row['word'], row['count']), end=' ')
+            print(f"{row['word']} ({row['count']})", end=' ')
         print()
 
 

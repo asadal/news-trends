@@ -63,7 +63,6 @@ class Result(FormView):
             context['left'] = polarity['진보']
             context['right'] = polarity['보수']
 
-            return context
         else:
             from newstrends.utils import search_keyword_sentiment
             df = search_keyword_sentiment(SEARCH_WORD)
@@ -80,4 +79,5 @@ class Result(FormView):
             context['df'] = df_list
             context['publishers'] = publishers_list
 
-            return context
+
+        return context
