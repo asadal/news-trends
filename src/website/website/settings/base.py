@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+
 import os
 import sys
 import json
@@ -18,8 +19,8 @@ pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROOT_DIR = os.path.abspath((__file__ + "/../../../../../"))
-TEMPLATES_DIR = os.path.join(os.path.abspath((__file__ + "/../../../")))
+ROOT_DIR = os.path.abspath(f"{__file__}/../../../../../")
+TEMPLATES_DIR = os.path.join(os.path.abspath(f"{__file__}/../../../"))
 
 TEMPLATES_FILE = os.path.join(TEMPLATES_DIR, 'templates')
 STATIC_DIR = os.path.join(TEMPLATES_DIR, 'static')

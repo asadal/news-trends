@@ -10,9 +10,47 @@ from newstrends.data import mysql
 punctuation = ['\'', '"', '.', ',', '!', '?', '~', '…', '”', '“', '/', ';', ':', '(', ')', '▲', '·', '=', '‘', '’', '@',
                '[', ']', '<', '>', '{', '}', "'", "\"", ".", ",", "!", "?", "~", "…", "”", "“", "/", ";", ":", "(", ")",
                "▲", "·", "=", "‘", "’", "@", "[", "]", "<", ">", "{", "}"]
-ignore_words = {'나', '너', '그', '그녀', '전', '후', '앞', '뒤', '것', '들', '등', '이', '저', '만', '수', '중', '할', '때', '도',
-                '의', '너', '은', '는', '가', '곳', '포토', '일', '며', '고', '말', '해', '다', '하', '번', '기', '추', '코',
-                'hspace', 'width', 'px'}
+ignore_words = {
+    '나',
+    '그',
+    '그녀',
+    '전',
+    '후',
+    '앞',
+    '뒤',
+    '것',
+    '들',
+    '등',
+    '이',
+    '저',
+    '만',
+    '수',
+    '중',
+    '할',
+    '때',
+    '도',
+    '의',
+    '너',
+    '은',
+    '는',
+    '가',
+    '곳',
+    '포토',
+    '일',
+    '며',
+    '고',
+    '말',
+    '해',
+    '다',
+    '하',
+    '번',
+    '기',
+    '추',
+    '코',
+    'hspace',
+    'width',
+    'px',
+}
 
 
 def print_dict(dictionary):
@@ -35,7 +73,7 @@ def parse_into_nouns(articles):
                     int(word)
                 except ValueError:
                     words.append(word)
-        if len(words) > 0:
+        if words:
             result.append(words)
     return result
 
@@ -50,13 +88,13 @@ def related_words_with_given_keyword(words, sim_matrix):
     :return: dictionary of related keywords containing {WORD}:{WORDS RELATED TO GIVEN KEYWORD}
     """
     num_words = len(words)
-    words_dict = dict()
-    sim_dict = dict()
+    words_dict = {}
+    sim_dict = {}
 
     for i in range(num_words):
         for j in range(num_words):
             if i != j and sim_matrix[i][j] > 10:
-                if words[i] in words_dict.keys():
+                if words[i] in words_dict:
                     num_count = len(words_dict[words[i]])
                     if num_count >= 10 and sim_dict[words[i]][-1] > sim_matrix[i][j]:
                         continue

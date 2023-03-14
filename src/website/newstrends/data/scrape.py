@@ -77,11 +77,10 @@ def print_status(*args):
     import datetime
     time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     message = args[0].format(*args[1:])
-    print('[{}] {}'.format(time, message))
+    print(f'[{time}] {message}')
 
 
 def get_html(publisher, url):
-    _html = ""
     try:
         resp = requests.get(url, headers=HEADERS)
     except requests.ConnectionError:
@@ -91,9 +90,7 @@ def get_html(publisher, url):
         print_status(publisher, 'Chunked Encoding Error!')
         return False
     resp.encoding = 'UTF-8'
-    if resp.status_code == 200:
-        _html = resp.text
-    return _html
+    return resp.text if resp.status_code == 200 else ""
 
 
 def change_datetime(date_info):

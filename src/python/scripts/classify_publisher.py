@@ -37,16 +37,14 @@ def save_as_pieces(model, path, publishers):
 def read_pieces(path):
     pieces = []
     with open(path) as f:
-        for line in f:
-            pieces.append(line.strip().split('\t'))
+        pieces.extend(line.strip().split('\t') for line in f)
     return pieces
 
 
 def read_labels_as_tensor(path, label_map):
     labels = []
     with open(path) as f:
-        for line in f:
-            labels.append(label_map[line.strip()])
+        labels.extend(label_map[line.strip()] for line in f)
     return torch.tensor(labels)
 
 
@@ -54,20 +52,19 @@ def print_predictions(model, loader, titles, path):
     model.eval()
     device = utils.to_device()
     count = 0
-    f = open(path, 'w')
-    for x, y in loader:
-        x = x.to(device)
-        y = y.to(device)
-        y_pred = torch.softmax(model(x), dim=1)
-        for i in range(x.size(0)):
-            pred_str = ', '.join(f'{e * 100:.1f}' for e in y_pred[i])
-            label = '조선일보' if y[i] == 0 else '한겨레경향'
-            f.write(f'Title: {titles[count]}\n')
-            f.write(f'Prediction: ({pred_str})\n')
-            f.write(f'True label: ({label})\n')
-            f.write('\n')
-            count += 1
-    f.close()
+    with open(path, 'w') as f:
+        for x, y in loader:
+            x = x.to(device)
+            y = y.to(device)
+            y_pred = torch.softmax(model(x), dim=1)
+            for i in range(x.size(0)):
+                pred_str = ', '.join(f'{e * 100:.1f}' for e in y_pred[i])
+                label = '조선일보' if y[i] == 0 else '한겨레경향'
+                f.write(f'Title: {titles[count]}\n')
+                f.write(f'Prediction: ({pred_str})\n')
+                f.write(f'True label: ({label})\n')
+                f.write('\n')
+                count += 1
 
 
 def start_interactive_session(model, spm_model, vocabulary):
@@ -94,7 +91,6 @@ def main():
     pub_path = '../../data/publishers'
     num_classes = 2
     embedding_dim = 12
-    batch_size = 512
     dropout = 0.5
 
     spm_model = utils.load_sentencepiece(spm_path)
@@ -114,6 +110,7 @@ def main():
         features = utils.to_integer_matrix(pieces, spm_vocab)
         labels = read_labels_as_tensor(
             os.path.join(train_path, 'labels.tsv'), label_map)
+        batch_size = 512
         loader = DataLoader(
             TensorDataset(features, labels), batch_size, shuffle=True)
 
